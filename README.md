@@ -17,6 +17,14 @@ CampusConnect is split into two independent applications:
 - [ ] Set `VITE_API_URL` in `frontend/.env` for the deployed backend.
 - [ ] Review CORS origin and cookie settings for the deployment domains.
 
+## Responsive navigation verification checklist
+
+- Desktop `>900px`: header shows Home, Search, MECS-Bot, Profile, Student Portal, and Menu; Academics, Attendance, and Scholarships are not top-nav items.
+- Laptop `901px-1200px`: the same desktop navigation remains visible and compact.
+- Tablet `621px-900px`: Home, MECS-Bot, and Profile remain visible in the header, with Search, Student Portal, and Menu controls beside them.
+- Mobile `<=620px`: bottom navigation shows Home, Search, MECS-Bot, and Profile.
+- Explore More follows the campus composition closely at each breakpoint without the former large vertical gap.
+
 ## Run the frontend
 
 ```powershell

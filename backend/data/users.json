@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "e2c5fa4951e476e8c3e7ebcf",
+    "name": "srinidhi",
+    "email": "cse24733025@matrusri.edu.in",
+    "phone": "6200720348",
+    "college": "Matrusri Engineering College",
+    "branch": "cse",
+    "year": "3rd",
+    "semester": "",
+    "passwordHash": "43d0ff49d349d56c4f67c614b90d2357:39aa55a6147935abb644818530531f21760fb4e637fa3651516ba333ce9c46a4fa617f46ce8bdaad59c03b6e418ef9d46f14a62b4d832a391f79c7cdc37227ca",
+    "createdAt": "2026-09-05T17:26:11.746Z"
+  }
+]
