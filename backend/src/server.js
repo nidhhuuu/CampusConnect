@@ -4,7 +4,16 @@ import { env } from '../config/env.js'
 import { authRoutes } from '../routes/authRoutes.js'
 
 const app = express()
-app.use(cors({ origin: env.frontendOrigin, credentials: true }))
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || origin === env.frontendOrigin || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      callback(null, true)
+    } else {
+      callback(null, true)
+    }
+  },
+  credentials: true,
+}))
 app.use(express.json())
 app.get('/api/health', (_request, response) => response.json({ status: 'ok' }))
 app.use('/api/auth', authRoutes)

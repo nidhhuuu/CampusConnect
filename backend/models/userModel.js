@@ -15,6 +15,6 @@ const publicUser = ({ passwordHash, ...user }) => user
 export const userModel = {
   create: ({ name, email, phone, password, college, branch, year, semester }) => { const users = readUsers(); if (users.some((user) => normalize(user.email) === normalize(email))) throw new Error('An account with this email already exists'); const user = { id: randomBytes(12).toString('hex'), name: String(name).trim(), email: normalize(email), phone: String(phone).trim(), college: String(college || 'Matrusri Engineering College').trim(), branch: String(branch || '').trim(), year: String(year || '').trim(), semester: String(semester || '').trim(), passwordHash: hashPassword(password), createdAt: new Date().toISOString() }; users.push(user); writeUsers(users); return publicUser(user) },
   findByEmail: (email) => readUsers().find((user) => normalize(user.email) === normalize(email)),
-  verify: (email, phone, password) => { const user = userModel.findByEmail(email); if (!user || (phone && user.phone !== String(phone).trim()) || !verifyPassword(password, user.passwordHash)) return null; return publicUser(user) },
+  verify: (identifier, password) => { const normalizedIdentifier = normalize(identifier); const user = readUsers().find((candidate) => normalize(candidate.email) === normalizedIdentifier || normalize(candidate.phone) === normalizedIdentifier); if (!user || !verifyPassword(password, user.passwordHash)) return null; return publicUser(user) },
   public: publicUser,
 }

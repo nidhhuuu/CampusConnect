@@ -10,5 +10,41 @@
     "semester": "",
     "passwordHash": "43d0ff49d349d56c4f67c614b90d2357:39aa55a6147935abb644818530531f21760fb4e637fa3651516ba333ce9c46a4fa617f46ce8bdaad59c03b6e418ef9d46f14a62b4d832a391f79c7cdc37227ca",
     "createdAt": "2026-09-05T17:26:11.746Z"
+  },
+  {
+    "id": "001f7bac4c8a3be351ccde3d",
+    "name": "srinidhi",
+    "email": "srinidhipulaboina330@gmail.com",
+    "phone": "6200720348",
+    "college": "Matrusri Engineering College",
+    "branch": "cse",
+    "year": "3rd",
+    "semester": "",
+    "passwordHash": "a14aaeccee9dc5c9273903f86055ca43:9df12d113487a2c1469ff2823f298e824e665840be345bc3e4990e9d09cd4448041950def91731923eb9a4e8e11085d5d71486bd548c89df87569fb643953c2a",
+    "createdAt": "2026-09-06T06:38:16.112Z"
+  },
+  {
+    "id": "d973e6f397562750270e63b2",
+    "name": "srinidhi",
+    "email": "cse24733024@matrusri.edu.in",
+    "phone": "6200720348",
+    "college": "Matrusri Engineering College",
+    "branch": "cse",
+    "year": "3rd",
+    "semester": "",
+    "passwordHash": "4b28fdfaf54fa8539991ffeb3140d076:ee241256f9e74748a908666ae57a06c25e23ac3f46b5e7766fea2c2a4c0e370a389b90e347c015f3410a28a898b29e057fb0aa450f8cec064cecf46f3c79ef17",
+    "createdAt": "2026-09-07T08:17:35.884Z"
+  },
+  {
+    "id": "b5d0330d597b54d9f37da4b8",
+    "name": "keerthana",
+    "email": "cse24733044@matrusri.edu.in",
+    "phone": "8886264541",
+    "college": "Matrusri Engineering College",
+    "branch": "cse",
+    "year": "3rd",
+    "semester": "",
+    "passwordHash": "06bdbfd6674182183f7f8bc98c157da0:bb0e4da9be2fb4e070ef6dcef7815c71e2e2f947f6e9636df8c57b57ab2f17126ce62cfd2333cfdb34d85ac8182e6b4e75626efb98704c61768fccb4b1f250ee",
+    "createdAt": "2026-09-09T10:15:19.524Z"
   }
 ]
