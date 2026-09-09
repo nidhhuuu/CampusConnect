@@ -1,7 +1,7 @@
 { 
     "env": { 
-        "ANTHROPIC_BASE_URL": "http://localhost:20128/v1",
-        "ANTHROPIC_AUTH_TOKEN": "sk-db1a8129173475c5-19b101-e982d2ff", 
-     "ANTHROPIC_MODEL": "horde/aphrodite/TheDrummer/Cydonia-24B-v4.3" 
+        "ANTHROPIC_BASE_URL": "",
+        "ANTHROPIC_AUTH_TOKEN": "", 
+     "ANTHROPIC_MODEL": "" 
  } 
 }
