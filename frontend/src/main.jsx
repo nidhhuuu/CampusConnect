@@ -173,9 +173,6 @@ function CampusHeader({ onSearch, dark, setDark }) {
           <NavLink className={({ isActive }) => (isActive ? 'active' : '')} to="/">
             Home
           </NavLink>
-          <NavLink className={({ isActive }) => (isActive ? 'active' : '')} to="/academics">
-            Academics
-          </NavLink>
           <button
             type="button"
             className="nav-link-btn"
@@ -185,9 +182,6 @@ function CampusHeader({ onSearch, dark, setDark }) {
             <Sparkles size={14} className="nav-icon-sparkle" />
             Ask AI
           </button>
-          <NavLink className={({ isActive }) => (isActive ? 'active' : '')} to="/profile">
-            Profile
-          </NavLink>
         </nav>
 
         <div className="header-tools">
@@ -1669,6 +1663,8 @@ function Home() {
 }
 
 function BentoGallery() {
+  const [activeSlide, setActiveSlide] = useState(0)
+  const [isResettingSlide, setIsResettingSlide] = useState(false)
   const slides = [
     {
       image: colleges[0].images[0],
@@ -1699,9 +1695,32 @@ function BentoGallery() {
     },
   ]
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveSlide((current) => current + 1)
+    }, 3000)
+
+    return () => clearInterval(timer)
+  }, [])
+
   return (
     <div className="college-carousel" aria-label="Featured colleges">
-      <div className="college-carousel-track">
+      <div
+        className="college-carousel-track"
+        style={{
+          transform: `translateX(-${activeSlide * 25}%)`,
+          transition: isResettingSlide ? 'none' : undefined,
+        }}
+        onTransitionEnd={() => {
+          if (activeSlide === slides.length) {
+            setIsResettingSlide(true)
+            requestAnimationFrame(() => {
+              setActiveSlide(0)
+              requestAnimationFrame(() => setIsResettingSlide(false))
+            })
+          }
+        }}
+      >
         {[...slides, slides[0]].map((slide, index) => (
           <Link to={slide.to} className="college-carousel-slide" key={`${slide.to}-${index}`}>
             <img src={slide.image} alt={slide.alt} />
@@ -1710,6 +1729,18 @@ function BentoGallery() {
               <strong>{slide.title}</strong>
               <span className="college-carousel-description">{slide.description}</span>
             </span>
+            <button
+              type="button"
+              className="college-carousel-swipe-cue"
+              aria-label="Show next college"
+              onClick={(event) => {
+                event.preventDefault()
+                event.stopPropagation()
+                if (activeSlide < slides.length) setActiveSlide((current) => current + 1)
+              }}
+            >
+              <ArrowRight size={18} />
+            </button>
           </Link>
         ))}
       </div>
