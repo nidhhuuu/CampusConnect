@@ -1669,26 +1669,50 @@ function Home() {
 }
 
 function BentoGallery() {
+  const slides = [
+    {
+      image: colleges[0].images[0],
+      alt: 'Matrusri Engineering College campus',
+      eyebrow: 'MATRUSRI ENGINEERING COLLEGE',
+      title: 'A focused place to build what comes next.',
+      description:
+        'An autonomous engineering institution in Saidabad, Hyderabad, built around accessible technical education and student-led learning.',
+      to: '/colleges/matrusri',
+    },
+    {
+      image: colleges[0].images[1],
+      alt: 'Matrusri campus life',
+      eyebrow: 'CAMPUS LIFE',
+      title: 'Find your rhythm beyond the classroom.',
+      description:
+        'Explore the spaces, people, and everyday moments that shape the Matrusri student experience.',
+      to: '/campus-life',
+    },
+    {
+      image: colleges[1].images[0],
+      alt: 'MVSR Engineering College campus',
+      eyebrow: 'MVSR ENGINEERING COLLEGE',
+      title: 'Engineering with a connected outlook.',
+      description:
+        'Discover MVSR Engineering College in Nadergul, Hyderabad, with active research, facilities, and industry connections.',
+      to: '/colleges/mvsr',
+    },
+  ]
+
   return (
-    <div className="bento-gallery">
-      <Link to="/colleges/matrusri" className="bento large">
-        <img src={colleges[0].images[0]} alt="Matrusri Engineering College campus" />
-        <span>
-          Matrusri
-          <br />
-          <b>in focus</b>
-        </span>
-      </Link>
-      <Link to="/colleges/matrusri" className="bento portrait">
-        <img src={colleges[0].images[1]} alt="Matrusri campus" />
-        <span>Campus life</span>
-      </Link>
-      <Link to="/colleges/mvsr" className="bento small">
-        <img src={colleges[1].images[0]} alt="MVSR Engineering College campus" />
-        <span>
-          Meet MVSR <ArrowRight size={14} />
-        </span>
-      </Link>
+    <div className="college-carousel" aria-label="Featured colleges">
+      <div className="college-carousel-track">
+        {[...slides, slides[0]].map((slide, index) => (
+          <Link to={slide.to} className="college-carousel-slide" key={`${slide.to}-${index}`}>
+            <img src={slide.image} alt={slide.alt} />
+            <span className="college-carousel-overlay">
+              <span className="college-carousel-eyebrow">{slide.eyebrow}</span>
+              <strong>{slide.title}</strong>
+              <span className="college-carousel-description">{slide.description}</span>
+            </span>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }
