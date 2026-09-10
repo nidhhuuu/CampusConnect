@@ -188,13 +188,6 @@ function CampusHeader({ onSearch, dark, setDark }) {
           <button className="icon-button" onClick={onSearch} aria-label="Search">
             <Search size={18} />
           </button>
-          <button
-            className="icon-button"
-            onClick={() => setDark(!dark)}
-            aria-label="Toggle theme"
-          >
-            {dark ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
 
           {isAuthenticated ? (
             <NavLink className="portal-link portal-link-auth" to="/portal">
@@ -263,6 +256,25 @@ function CampusHeader({ onSearch, dark, setDark }) {
                 >
                   Scholarships
                 </NavLink>
+                <button
+                  type="button"
+                  onClick={() => setDark(!dark)}
+                  aria-label="Toggle theme"
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '9px 10px',
+                    background: 'transparent',
+                    color: 'var(--ink)',
+                    fontSize: 12,
+                    textAlign: 'left',
+                  }}
+                >
+                  {dark ? <Sun size={15} /> : <Moon size={15} />}
+                  <span>{dark ? 'Light theme' : 'Dark theme'}</span>
+                </button>
               </nav>
             )}
           </div>
