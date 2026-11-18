@@ -21,7 +21,6 @@ import {
   LogOut,
   Mail,
   Menu,
-  Moon,
   Phone,
   RefreshCw,
   School,
@@ -30,7 +29,6 @@ import {
   Share2,
   ShieldCheck,
   Sparkles,
-  Sun,
   UserRound,
   X,
 } from 'lucide-react'
@@ -169,48 +167,46 @@ function CampusHeader({ onSearch, dark, setDark }) {
         <Brand />
         <span className="college-context">{selectedCollegeName}</span>
 
-        <nav className="main-nav" aria-label="Main Navigation">
-          <NavLink className={({ isActive }) => (isActive ? 'active' : '')} to="/">
-            Home
-          </NavLink>
-          <button
-            type="button"
-            className="nav-link-btn"
-            onClick={openChat}
-            aria-label="Open Ask AI Assistant"
-          >
-            <Sparkles size={14} className="nav-icon-sparkle" />
-            Ask AI
-          </button>
-        </nav>
-
-        <div className="header-tools">
-          <button className="icon-button" onClick={onSearch} aria-label="Search">
-            <Search size={18} />
-          </button>
-
-          {isAuthenticated ? (
-            <NavLink className="portal-link portal-link-auth" to="/portal">
-              <UserRound size={15} />
-              <span>{user?.name ? user.name.split(' ')[0] : 'Portal'}</span>
-            </NavLink>
-          ) : (
-            <NavLink className="portal-link" to="/login">
-              <UserRound size={15} />
-              <span>Student Portal</span>
-              <ArrowRight size={13} />
-            </NavLink>
-          )}
-
-          <div className="menu-wrap" style={{ position: 'relative' }}>
+        <div className="header-actions">
+          <nav className="main-nav" aria-label="Main Navigation">
             <button
-              className="icon-button menu-button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-expanded={menuOpen}
-              aria-label="Open menu"
+              type="button"
+              className="nav-link-btn"
+              onClick={openChat}
+              aria-label="Open Ask AI Assistant"
             >
-              <Menu size={19} />
+              <Sparkles size={14} className="nav-icon-sparkle" />
+              Ask AI
             </button>
+          </nav>
+
+          <div className="header-tools">
+            <button className="icon-button" onClick={onSearch} aria-label="Search">
+              <Search size={18} />
+            </button>
+
+            {isAuthenticated ? (
+              <NavLink className="portal-link portal-link-auth" to="/portal">
+                <UserRound size={15} />
+                <span>{user?.name ? user.name.split(' ')[0] : 'Portal'}</span>
+              </NavLink>
+            ) : (
+              <NavLink className="portal-link" to="/login">
+                <UserRound size={15} />
+                <span>Student Portal</span>
+                <ArrowRight size={13} />
+              </NavLink>
+            )}
+
+            <div className="menu-wrap" style={{ position: 'relative' }}>
+              <button
+                className="icon-button menu-button"
+                onClick={() => setMenuOpen(!menuOpen)}
+                aria-expanded={menuOpen}
+                aria-label="Open menu"
+              >
+                <Menu size={19} />
+              </button>
             {menuOpen && (
               <nav
                 className="menu-panel"
@@ -258,7 +254,10 @@ function CampusHeader({ onSearch, dark, setDark }) {
                 </NavLink>
                 <button
                   type="button"
-                  onClick={() => setDark(!dark)}
+                  onClick={() => {
+                    setDark(!dark)
+                    setMenuOpen(false)
+                  }}
                   aria-label="Toggle theme"
                   style={{
                     width: '100%',
@@ -272,12 +271,12 @@ function CampusHeader({ onSearch, dark, setDark }) {
                     textAlign: 'left',
                   }}
                 >
-                  {dark ? <Sun size={15} /> : <Moon size={15} />}
                   <span>{dark ? 'Light theme' : 'Dark theme'}</span>
                 </button>
               </nav>
             )}
           </div>
+        </div>
         </div>
       </header>
       {location.pathname === '/' && (
@@ -655,6 +654,7 @@ function AskAiFloatingButton() {
 // ==========================================
 function SearchOverlay({ onClose }) {
   const [query, setQuery] = useState('')
+  const [accessNotice, setAccessNotice] = useState('')
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
 
@@ -680,6 +680,14 @@ function SearchOverlay({ onClose }) {
   const results = items.filter((item) => item.toLowerCase().includes(query.toLowerCase()))
 
   const go = (item) => {
+    if (
+      !isAuthenticated &&
+      ['Campus life', 'Notices', 'Scholarships'].includes(item)
+    ) {
+      setAccessNotice(`Log in to the Student Portal to view ${item}.`)
+      return
+    }
+
     onClose()
     if (item.includes('Matrusri')) navigate('/colleges/matrusri')
     else if (item.includes('MVSR')) navigate('/colleges/mvsr')
@@ -702,7 +710,10 @@ function SearchOverlay({ onClose }) {
           <input
             autoFocus
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value)
+              setAccessNotice('')
+            }}
             placeholder="Search CampusConnect..."
           />
           <kbd>ESC</kbd>
@@ -711,6 +722,7 @@ function SearchOverlay({ onClose }) {
           </button>
         </div>
         <div className="search-body">
+          {accessNotice && <p className="search-label" role="status">{accessNotice}</p>}
           <p className="search-label">{query ? 'Results' : 'Quick links'}</p>
           {results.map((item) => (
             <button className="search-result" key={item} onClick={() => go(item)}>
@@ -814,7 +826,7 @@ function AcademicsPage() {
   const studentId = user?.email?.split('@')[0] || user?.id
 
   return (
-    <main>
+    <main className="academic-page">
       <PageIntro
         eyebrow="ACADEMICS · AUTHENTICATED"
         title="Your Academic Overview"
@@ -1763,6 +1775,78 @@ function BentoGallery() {
 function CollegeProfile() {
   const { collegeId } = useParams()
   const college = colleges.find((item) => item.id === collegeId) || colleges[0]
+  const [activeTab, setActiveTab] = useState('Overview')
+  const isMatrusri = college.id === 'matrusri'
+
+  const tabDetails = {
+    Overview: {
+      eyebrow: 'ABOUT THE COLLEGE',
+      title: 'A place to build what comes next.',
+      copy: isMatrusri
+        ? 'Matrusri Engineering College is an autonomous engineering institution in Saidabad, Hyderabad, managed by Matrusri Education Society. It provides technical education, research opportunities, and a campus community built around student-led learning.'
+        : college.description,
+      facts: college.highlights,
+    },
+    Admissions: {
+      eyebrow: 'ADMISSIONS',
+      title: 'Start with the right route.',
+      copy: 'Applicants should first review eligibility and the current admission notification, then apply through the official entrance and counselling process applicable to the selected course.',
+      facts: isMatrusri
+        ? ['B.E. admissions use the official Telangana engineering counselling process', 'Verify TG EAPCET rank eligibility and reporting schedule', 'Keep academic, identity, and category documents ready', 'Confirm seat category and reporting requirements with the college']
+        : ['Review current course eligibility and entrance requirements', 'Complete the official counselling or application process', 'Verify reporting documents with the admissions office'],
+    },
+    Fees: {
+      eyebrow: 'FEES & FINANCE',
+      title: 'Plan the complete academic cost.',
+      copy: 'Course fees can differ by branch, seat category, academic year, and approved government or management admission category. Use the official college fee circular before making any payment.',
+      facts: isMatrusri
+        ? ['No unofficial fee total is shown here', 'Confirm tuition and special fees for the selected seat category', 'Ask the accounts office about payment schedules and receipts', 'Explore Telangana ePASS and institutional grants separately']
+        : ['Confirm the current-year fee for the selected course', 'Ask about tuition, examination, and incidental charges', 'Request an official written fee breakdown'],
+    },
+    Courses: {
+      eyebrow: 'ACADEMICS',
+      title: 'Choose a focused engineering path.',
+      copy: 'Course availability and intake can change, so confirm the current approved programme list with the college before applying.',
+      facts: isMatrusri
+        ? ['Computer Science and Engineering', 'CSE with Artificial Intelligence and Machine Learning', 'Information Technology', 'Electronics and Communication Engineering', 'Electrical and Electronics Engineering', 'Mechanical Engineering', 'Civil Engineering']
+        : ['Engineering undergraduate programmes', 'Specialisations available at the college', 'Current approved intake and syllabus'],
+    },
+    Placements: {
+      eyebrow: 'CAREERS',
+      title: 'Prepare beyond the classroom.',
+      copy: 'The placement journey typically combines technical preparation, aptitude training, interviews, internships, industry interaction, and career guidance.',
+      facts: isMatrusri
+        ? ['Training and Placement Cell', 'Aptitude and interview preparation', 'Technical project and portfolio guidance', 'On-campus and pooled recruitment opportunities']
+        : ['Placement and training support', 'Aptitude and interview preparation', 'Industry and recruitment engagement'],
+    },
+    Scholarships: {
+      eyebrow: 'FINANCIAL SUPPORT',
+      title: 'Find support that matches your need.',
+      copy: 'Scholarships are available through government schemes, merit support, and institution-specific assistance. Eligibility, documents, and deadlines must be verified in the official notice.',
+      facts: isMatrusri
+        ? ['Telangana ePASS and state government support', 'MEC merit scholarship opportunities', 'Matrusri support grants for eligible students', 'Means-based scholarships where eligibility criteria are met']
+        : ['State government scholarship schemes', 'Institutional merit support', 'Means-based scholarship opportunities'],
+    },
+    'Campus Life': {
+      eyebrow: 'CAMPUS LIFE',
+      title: 'Learning continues beyond lectures.',
+      copy: 'Student life is shaped through laboratories, technical and cultural activities, student groups, sports, seminars, and the spaces used every day on campus.',
+      facts: isMatrusri
+        ? ['Engineering laboratories and learning spaces', 'Library and digital academic resources', 'Technical clubs and student activities', 'Cultural, innovation, and sports events']
+        : ['Laboratories and learning resources', 'Student clubs and cultural activities', 'Sports and campus events'],
+    },
+    Contact: {
+      eyebrow: 'GET IN TOUCH',
+      title: 'Confirm details directly with the college.',
+      copy: isMatrusri
+        ? 'Use the official college contact channels for admissions, fee, programme, placement, or document questions.'
+        : 'Use the official college contact channels for the latest admissions and campus information.',
+      facts: isMatrusri
+        ? ['Matrusri Engineering College', 'Saidabad, Hyderabad, Telangana', 'Phone: 040 24072764', 'Email: principal@matrusri.edu.in']
+        : [college.location, 'Contact details through the official college website', 'Confirm office hours before visiting'],
+    },
+  }
+  const selectedDetails = tabDetails[activeTab]
 
   return (
     <main>
@@ -1797,40 +1881,30 @@ function CollegeProfile() {
             'Scholarships',
             'Campus Life',
             'Contact',
-          ].map((tab, index) => (
-            <button className={index === 0 ? 'active' : ''} key={tab}>
+          ].map((tab) => (
+            <button
+              className={activeTab === tab ? 'active' : ''}
+              onClick={() => setActiveTab(tab)}
+              key={tab}
+            >
               {tab}
             </button>
           ))}
         </div>
-        <div className="profile-grid">
+        <div className="profile-grid profile-detail" key={activeTab}>
           <div>
-            <p className="eyebrow">ABOUT THE COLLEGE</p>
-            <h2>A place to build what comes next.</h2>
-            <p>
-              {college.description} This profile features verified institution facts and campus
-              highlights.
-            </p>
+            <p className="eyebrow orange">{selectedDetails.eyebrow}</p>
+            <h2>{selectedDetails.title}</h2>
+            <p>{selectedDetails.copy}</p>
           </div>
           <div className="highlight-list">
-            {college.highlights.map((item) => (
+            {selectedDetails.facts.map((item) => (
               <div key={item}>
                 <Check size={15} /> {item}
               </div>
             ))}
           </div>
         </div>
-        <div className="profile-images">
-          {college.images.slice(1).map((image, index) => (
-            <img
-              className={`profile-photo photo-${index}`}
-              src={image}
-              alt={`${college.name} campus view ${index + 2}`}
-              key={image}
-            />
-          ))}
-        </div>
-        <p className="source-note">Image and profile reference: {college.source}.</p>
       </section>
     </main>
   )
@@ -1876,24 +1950,68 @@ function Compare() {
 
 function CampusLife() {
   const [lightbox, setLightbox] = useState(null)
-  const labels = ['Campus', 'Labs', 'Student life', 'Events', 'Campus view']
+  const images = [
+    {
+      src: 'https://www.campusoption.com/images/colleges/logos/30_11_17_112611_Logo.jpg',
+      label: 'Matrusri identity',
+      alt: 'Matrusri Engineering College emblem',
+      className: 'gallery-logo',
+    },
+    {
+      src: 'https://matrusri.edu.in/wp-content/uploads/2020/10/f1148160-scaled.jpg',
+      label: 'Campus grounds',
+      alt: 'Matrusri Engineering College campus grounds',
+    },
+    {
+      src: 'https://matrusri.edu.in/wp-content/uploads/2020/08/4.jpeg',
+      label: 'Campus life',
+      alt: 'Matrusri Engineering College campus',
+    },
+    {
+      src: 'https://imgv2-1-f.scribdassets.com/img/document/864528553/original/5e1f45bf44/1?v=1',
+      label: 'College community',
+      alt: 'Matrusri Engineering College community',
+    },
+    {
+      src: 'https://matrusri.edu.in/wp-content/uploads/2023/09/0Y8A6209-scaled.jpg',
+      label: 'Campus view',
+      alt: 'Matrusri Engineering College campus view',
+    },
+  ]
 
   return (
     <main>
       <PageIntro
         eyebrow="MATRUSRI CAMPUS LIFE"
-        title="See the place in pieces."
-        copy="Official Matrusri imagery arranged as an asymmetric campus story."
+        title="Learn, connect, belong."
+        copy="A campus experience shaped by engineering practice, student communities, culture, and everyday moments."
       />
+      <section className="experience-grid page-width">
+        <article>
+          <span>01</span>
+          <h2>Build in practice</h2>
+          <p>Labs and project spaces give students room to turn classroom concepts into working solutions.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h2>Find your community</h2>
+          <p>Technical groups, cultural teams, sports, and college events create a strong student network.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h2>Keep growing</h2>
+          <p>Seminars, workshops, competitions, and placement preparation support learning beyond the syllabus.</p>
+        </article>
+      </section>
       <section className="campus-gallery page-width">
-        {colleges[0].images.map((image, index) => (
+        {images.map((image, index) => (
           <button
-            className={`gallery-item gallery-${index}`}
-            onClick={() => setLightbox(image)}
-            key={image}
+            className={`gallery-item gallery-${index} ${image.className || ''}`}
+            onClick={() => setLightbox(image.src)}
+            key={image.src}
           >
-            <img src={image} alt={`Matrusri campus gallery ${index + 1}`} />
-            <span>{labels[index] || 'Campus view'}</span>
+            <img src={image.src} alt={image.alt} />
+            <span>{image.label}</span>
           </button>
         ))}
       </section>
@@ -1957,6 +2075,7 @@ function NoticesPage() {
 
 function ScholarshipsPage() {
   const [filter, setFilter] = useState('All')
+  const [selected, setSelected] = useState(null)
 
   return (
     <main>
@@ -1980,7 +2099,11 @@ function ScholarshipsPage() {
         {scholarships
           .filter((item) => filter === 'All' || item.category === filter)
           .map((item) => (
-            <article className="scholarship-card" key={item.name}>
+            <button
+              className="scholarship-card"
+              onClick={() => setSelected(item)}
+              key={item.name}
+            >
               <p>{item.category}</p>
               <h3>{item.name}</h3>
               <small>{item.eligibility}</small>
@@ -1988,9 +2111,32 @@ function ScholarshipsPage() {
                 <strong>{item.amount}</strong>
                 <span>Deadline {item.deadline}</span>
               </div>
-            </article>
+              <span className="scholarship-action">View details <ArrowRight size={14} /></span>
+            </button>
           ))}
       </section>
+      {selected && (
+        <div className="modal-backdrop" onClick={() => setSelected(null)}>
+          <article className="notice-modal scholarship-modal" onClick={(event) => event.stopPropagation()}>
+            <button onClick={() => setSelected(null)} aria-label="Close scholarship">
+              <X size={18} />
+            </button>
+            <p className="eyebrow orange">{selected.category}</p>
+            <h2>{selected.name}</h2>
+            <p>{selected.eligibility}. Confirm current eligibility, required documents, application steps, and award terms in the official scholarship notice before applying.</p>
+            <div className="scholarship-modal-grid">
+              <div>
+                <span>Expected support</span>
+                <strong>{selected.amount}</strong>
+              </div>
+              <div>
+                <span>Deadline</span>
+                <strong>{selected.deadline}</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      )}
     </main>
   )
 }

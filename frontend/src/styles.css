@@ -127,8 +127,7 @@ a {
 .main-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-left: auto;
+  gap: 4px;
 }
 
 .main-nav a,
@@ -138,15 +137,20 @@ a {
   background: transparent;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 4px;
-  transition: color 0.15s;
+  gap: 6px;
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  transition: color 0.15s, background 0.15s, border-color 0.15s;
 }
 
 .main-nav a.active,
 .main-nav a:hover,
 .nav-link-btn:hover {
   color: var(--green);
+  background: var(--soft);
+  border-color: rgba(20, 83, 45, 0.18);
   font-weight: 700;
 }
 
@@ -154,33 +158,44 @@ a {
   color: var(--orange);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+
 .header-tools {
   display: flex;
-  gap: 8px;
+  gap: 5px;
   align-items: center;
 }
 
 .icon-button {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  background: transparent;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--paper) 84%, var(--soft));
   color: var(--ink);
-  transition: background 0.15s;
+  transition: background 0.15s, border-color 0.15s, transform 0.15s;
 }
 
 .icon-button:hover {
   background: var(--soft);
+  border-color: rgba(20, 83, 45, 0.18);
+  transform: translateY(-1px);
 }
 
 .portal-link {
   display: flex;
   align-items: center;
   gap: 7px;
+  height: 38px;
   padding: 8px 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--green);
   color: #fff;
   font-size: 11px;
@@ -647,6 +662,28 @@ a {
 /* ==========================================
    ACADEMICS PAGE STYLES
    ========================================== */
+.academic-page {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  letter-spacing: 0;
+}
+
+.academic-page .page-intro h1,
+.academic-page h2 {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  letter-spacing: -0.7px;
+}
+
+.academic-page .page-intro h1 {
+  letter-spacing: -1.2px;
+}
+
+.academic-page .academic-tabs button,
+.academic-page .dashboard-details,
+.academic-page .academic-info-card,
+.academic-page .academic-subtext {
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+}
+
 .academic-profile-strip {
   margin-bottom: 28px;
 }
@@ -1502,6 +1539,21 @@ a {
   font-weight: 700;
 }
 
+.profile-detail {
+  animation: profileDetailIn 0.28s ease both;
+}
+
+@keyframes profileDetailIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .profile-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1619,10 +1671,43 @@ a {
 /* ==========================================
    CAMPUS LIFE & NOTICES
    ========================================== */
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 13px;
+  margin-bottom: 28px;
+}
+
+.experience-grid article {
+  min-height: 180px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--soft);
+}
+
+.experience-grid article > span {
+  color: var(--orange);
+  font: 800 10px Manrope, sans-serif;
+  letter-spacing: 1px;
+}
+
+.experience-grid h2 {
+  font: 700 18px Manrope, sans-serif;
+  margin: 24px 0 8px;
+}
+
+.experience-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
 .campus-gallery {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr 1fr;
-  grid-template-rows: 230px 180px;
+  grid-template-rows: 230px 180px 170px;
   gap: 13px;
   padding-bottom: 100px;
 }
@@ -1660,6 +1745,9 @@ a {
 .gallery-1 { grid-column: 2; }
 .gallery-2 { grid-column: 3; grid-row: span 2; }
 .gallery-3 { grid-column: 2; }
+.gallery-4 { grid-column: 1 / -1; }
+.gallery-logo { background: #fff; }
+.gallery-logo img { object-fit: contain; padding: 18px; }
 
 .lightbox {
   position: fixed;
@@ -1806,6 +1894,15 @@ a {
   display: flex;
   flex-direction: column;
   background: var(--soft);
+  color: var(--ink);
+  text-align: left;
+  transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+}
+
+.scholarship-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(20, 83, 45, 0.24);
+  box-shadow: 0 18px 40px rgba(23, 35, 29, 0.08);
 }
 
 .scholarship-card p {
@@ -1842,6 +1939,45 @@ a {
 .scholarship-card > div span {
   color: var(--muted);
   font-size: 10px;
+}
+
+.scholarship-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 14px;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.scholarship-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.scholarship-modal-grid div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.scholarship-modal-grid span {
+  color: var(--muted);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.scholarship-modal-grid strong {
+  font: 800 16px Manrope, sans-serif;
 }
 
 /* ==========================================
@@ -2070,6 +2206,21 @@ a {
 @media (max-width: 620px) {
   .page-width {
     width: 88%;
+  }
+  .campus-gallery {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: repeat(3, 170px);
+  }
+  .gallery-0 { grid-column: 1; grid-row: 1; }
+  .gallery-1 { grid-column: 2; grid-row: 1; }
+  .gallery-2 { grid-column: 1; grid-row: 2; }
+  .gallery-3 { grid-column: 2; grid-row: 2; }
+  .gallery-4 { grid-column: 1 / -1; grid-row: 3; }
+  .experience-grid {
+    grid-template-columns: 1fr;
+  }
+  .experience-grid article {
+    min-height: 150px;
   }
   .college-carousel {
     width: 100%;
