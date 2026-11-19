@@ -533,6 +533,29 @@ a {
   word-break: break-word;
 }
 
+.chat-sources {
+  display: grid;
+  gap: 4px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  font-size: 10px;
+}
+
+.chat-sources b {
+  color: var(--muted);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.chat-sources a {
+  color: var(--orange);
+  line-height: 1.35;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
 .chat-bubble-wrap.user .chat-bubble p {
   background: var(--green);
   color: #fff;

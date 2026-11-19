@@ -34,6 +34,7 @@ import {
 } from 'lucide-react'
 import { attendance, colleges, courseNames, exams, notices, scholarships } from './data/mockData'
 import { authApi } from './api/auth'
+import { sendChatMessage } from './api/chat'
 import './styles.css'
 
 // ==========================================
@@ -334,74 +335,8 @@ function BottomNav({ onSearch }) {
 // ==========================================
 // ASK AI CHAT DRAWER / MODAL
 // ==========================================
-const CAMPUS_KNOWLEDGE = [
-  {
-    keywords: ['hi', 'hello', 'hey', 'start', 'help'],
-    response:
-      "Hello! I am your CampusConnect AI Assistant. You can ask me about admissions, academic policies, campus facilities, college comparisons, departments, scholarships, and how to access your Student Portal.",
-  },
-  {
-    keywords: ['attendance', 'present', 'absent', 'percentage'],
-    response:
-      "Attendance records are managed securely through the Student Portal. Once logged in, you can verify your registered semester attendance through the official academic portal.",
-  },
-  {
-    keywords: ['academics', 'timetable', 'course', 'courses', 'subject', 'syllabus'],
-    response:
-      "Academic details including course syllabi, semester timetables, and department schedules are available on the Academics page. A Student Portal login is required to access enrolled student records.",
-  },
-  {
-    keywords: ['matrusri', 'mec', 'saidabad'],
-    response:
-      "Matrusri Engineering College (MEC) is an autonomous engineering institution located in Saidabad, Hyderabad, established by the Matrusri Education Society. It offers undergraduate programs in CSE, IT, ECE, EEE, Mechanical, and Civil Engineering.",
-  },
-  {
-    keywords: ['mvsr', 'nadergul'],
-    response:
-      "MVSR Engineering College is an autonomous institution established in 1981 located in Nadergul, Hyderabad, known for engineering programs, digitized campus facilities, and active placements.",
-  },
-  {
-    keywords: ['portal', 'login', 'student portal', 'signin', 'account'],
-    response:
-      "You can log in to the Student Portal using your college email address and password by clicking 'Student Portal' in the navigation bar or heading to the Login page.",
-  },
-  {
-    keywords: ['exam', 'exams', 'results', 'marks', 'grade', 'sgpa', 'cgpa'],
-    response:
-      "Examination timetables, hall tickets, and official grade cards are published by the college Examination Branch and updated in the Student Portal for enrolled students.",
-  },
-  {
-    keywords: ['scholarship', 'scholarships', 'epass', 'fee', 'fees'],
-    response:
-      "Scholarship opportunities including Telangana ePASS, merit-based grants, and institution assistance can be explored in the Scholarships section.",
-  },
-  {
-    keywords: ['profile', 'logout', 'password', 'security'],
-    response:
-      "You can manage your verified student account, switch appearance themes, check session security, or log out anytime from the Profile page.",
-  },
-]
-
-function getAiResponse(userText, user) {
-  const text = userText.toLowerCase()
-
-  for (const item of CAMPUS_KNOWLEDGE) {
-    if (item.keywords.some((kw) => text.includes(kw))) {
-      if (user && (text.includes('my') || text.includes('i'))) {
-        if (text.includes('college') || text.includes('where')) {
-          return `According to your authenticated record, you are enrolled at ${user.college || 'Matrusri Engineering College'} in the ${user.branch?.toUpperCase() || 'CSE'} department (${user.year || '3rd'} Year).`
-        }
-      }
-      return item.response
-    }
-  }
-
-  return "I'm here to help with all CampusConnect queries! You can ask about college details, the Academics section, student portal authentication, admissions, campus facilities, or exam notices."
-}
-
 function AskAiChatDrawer() {
   const { isOpen, closeChat } = useAskAi()
-  const { user } = useAuth()
   const [messages, setMessages] = useState([
     {
       id: 'welcome',
@@ -446,7 +381,7 @@ function AskAiChatDrawer() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [isOpen, closeChat])
 
-  const handleSend = (textToSend) => {
+  const handleSend = async (textToSend) => {
     const query = (textToSend || input).trim()
     if (!query || isTyping) return
 
@@ -462,25 +397,27 @@ function AskAiChatDrawer() {
     setInput('')
     setIsTyping(true)
 
-    // Simulate natural AI thinking & response
-    setTimeout(() => {
-      try {
-        const botReply = getAiResponse(query, user)
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: `bot-${Date.now()}`,
-            from: 'bot',
-            text: botReply,
-            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          },
-        ])
-      } catch (err) {
-        setError('Unable to get AI response. Please try again.')
-      } finally {
-        setIsTyping(false)
-      }
-    }, 550)
+    try {
+      const history = [...messages, userMsg]
+        .filter((message) => message.id !== 'welcome')
+        .slice(-20)
+        .map(({ from, text }) => ({ role: from === 'bot' ? 'assistant' : 'user', content: text }))
+      const { reply: botReply, sources } = await sendChatMessage(history)
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-${Date.now()}`,
+          from: 'bot',
+          text: botReply,
+          sources,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        },
+      ])
+    } catch (err) {
+      setError(err.message || 'Unable to get AI response. Please try again.')
+    } finally {
+      setIsTyping(false)
+    }
   }
 
   const handleKeyDown = (e) => {
@@ -563,6 +500,21 @@ function AskAiChatDrawer() {
                   )}
                   <div className="chat-bubble">
                     <p>{msg.text}</p>
+                    {msg.sources?.length > 0 && (
+                      <div className="chat-sources">
+                        <b>Sources</b>
+                        {msg.sources.map((source) => (
+                          <a
+                            key={source.url}
+                            href={source.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {source.title}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                     <span className="chat-time">{msg.time}</span>
                   </div>
                 </div>
